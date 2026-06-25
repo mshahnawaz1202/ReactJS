@@ -59,4 +59,3 @@ const elem1 = React.createElement('h2', { className: 'elemnt1', id: 'first', sty
 
 ReactDOM.render(elem1,root)
 
-v
