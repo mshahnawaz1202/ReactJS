@@ -1,23 +1,48 @@
-=======================================
-1. How to make react rpoject
-=======================================
-
-make a react folder : npx create-react-app <folder_name>
-run the code : npm run start
+==============================================================================
+                            REACT - SETUP & BASICS
+==============================================================================
 
 
-make app using Vite : npm create vite@latest
+==============================================================================
+1. Creating a React Project
+==============================================================================
+
+Method 1 : Create React App (CRA)
+---------------------------------
+
+Step 1 : Create Project
+
+    npx create-react-app my-app
+
+Step 2 : Move into project
+
+    cd my-app
+
+Step 3 : Run project
+
+    npm start
 
 
+Method 2 : Vite (Recommended)
+-----------------------------
+
+Step 1 : Create Project
+
+    npm create vite@latest
+
+Step 2 : Install Dependencies
+
+    npm install
+
+Step 3 : Run Project
+
+    npm run dev
 
 
+==============================================================================
+2. React Components
+==============================================================================
 
+A Component is simply a JavaScript function that returns JSX.
 
-
-
-
-
-
-
-
-
+...
