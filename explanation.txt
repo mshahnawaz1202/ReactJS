@@ -339,3 +339,998 @@ Key Takeaways
 ✔ Building projects is the best way to master React concepts and apply them in real-world applications. 
 
 ...
+
+
+
+
+
+========================================================================================================================================================================
+============================================================
+                    REACT FIBER COMPLETE GUIDE
+============================================================
+
+React Fiber is the new reconciliation engine introduced in
+React 16. It replaced the old stack-based reconciliation
+algorithm.
+
+Fiber is the core architecture that makes React faster,
+more responsive, and capable of handling complex UI updates
+without blocking the browser.
+
+References:
+1. React Fiber Architecture
+   https://github.com/acdlite/react-fiber-architecture
+
+2. GeeksforGeeks - What is React Fiber?
+   https://www.geeksforgeeks.org/reactjs/what-is-react-fiber/
+
+
+============================================================
+WHY WAS REACT FIBER INTRODUCED?
+============================================================
+
+Before React Fiber, React used a synchronous rendering
+approach.
+
+When a state update happened:
+
+    setState()
+
+React immediately started updating the entire component tree.
+
+Example:
+
+App
+|
+|-- Navbar
+|
+|-- Sidebar
+|
+|-- Dashboard
+|      |
+|      |-- Charts
+|      |
+|      |-- Tables
+|
+|-- Footer
+
+
+React had to complete the whole tree update before giving
+control back to the browser.
+
+Problems:
+
+- UI freezing
+- Slow typing
+- Laggy animations
+- Poor user experience
+
+
+Example:
+
+If a user is typing a message:
+
+    User typing
+          |
+          |
+          v
+    React renders huge component tree
+          |
+          |
+          v
+    Browser finally updates screen
+
+
+The typing feels slow.
+
+
+============================================================
+THE IDEA BEHIND REACT FIBER
+============================================================
+
+Fiber introduced incremental rendering.
+
+Instead of doing all work at once:
+
+Old React:
+
+    Work
+      |
+      |
+      v
+    Complete Everything
+      |
+      |
+      v
+    Browser Update
+
+
+Fiber:
+
+    Small Work Unit
+          |
+          v
+       Pause
+          |
+          v
+    Browser Handles User Input
+          |
+          v
+       Resume Work
+
+
+Fiber allows React to:
+
+- Pause rendering
+- Resume rendering
+- Cancel unnecessary work
+- Prioritize important updates
+
+
+============================================================
+WHAT IS A FIBER?
+============================================================
+
+A Fiber is a unit of work.
+
+Every React component has a Fiber object.
+
+Example:
+
+Component:
+
+function App(){
+
+    return (
+        <>
+          <Header/>
+          <Content/>
+        </>
+    )
+
+}
+
+
+Fiber Tree:
+
+
+             App Fiber
+                 |
+       --------------------
+       |                  |
+       v                  v
+ Header Fiber       Content Fiber
+
+
+Each component is represented internally as a Fiber node.
+
+
+============================================================
+FIBER OBJECT STRUCTURE
+============================================================
+
+A Fiber object contains information about a component.
+
+Conceptually:
+
+
+Fiber {
+
+    type,
+
+    key,
+
+    stateNode,
+
+    child,
+
+    sibling,
+
+    return,
+
+    pendingProps,
+
+    memoizedProps,
+
+    memoizedState,
+
+    alternate,
+
+    flags
+
+}
+
+
+
+============================================================
+IMPORTANT FIBER PROPERTIES
+============================================================
+
+
+1. TYPE
+------------------------------------------------------------
+
+Defines what the Fiber represents.
+
+
+Example:
+
+<div>Hello</div>
+
+
+Fiber:
+
+type = "div"
+
+
+
+Component:
+
+function Header(){}
+
+
+Fiber:
+
+type = Header
+
+
+
+------------------------------------------------------------
+
+2. KEY
+------------------------------------------------------------
+
+Used during list reconciliation.
+
+
+Example:
+
+
+items.map(item => (
+
+    <li key={item.id}>
+        {item.name}
+    </li>
+
+))
+
+
+Keys help React identify which elements changed.
+
+
+
+------------------------------------------------------------
+
+3. CHILD
+------------------------------------------------------------
+
+Points to the first child Fiber.
+
+
+Example:
+
+
+App
+
+|
+|
+v
+
+Header
+
+Header is stored as App's child.
+
+
+
+------------------------------------------------------------
+
+4. SIBLING
+------------------------------------------------------------
+
+Connects multiple children.
+
+
+Example:
+
+
+App
+
+ |
+ |
+ v
+
+Header
+
+ |
+ |
+ v
+
+Main
+
+ |
+ |
+ v
+
+Footer
+
+
+Fiber does not store children as a normal array.
+
+It uses linked structure:
+
+child -> first child
+
+sibling -> next child
+
+
+
+------------------------------------------------------------
+
+5. RETURN
+------------------------------------------------------------
+
+Points to the parent Fiber.
+
+
+Example:
+
+
+       App
+
+        ^
+        |
+     return
+
+        |
+
+      Header
+
+
+
+------------------------------------------------------------
+
+6. ALTERNATE
+------------------------------------------------------------
+
+One of the most important Fiber concepts.
+
+
+React keeps two Fiber trees:
+
+
+1. Current Fiber Tree
+
+The tree currently displayed on screen.
+
+
+2. Work-In-Progress Fiber Tree
+
+The new tree being prepared.
+
+
+Example:
+
+
+Current Fiber
+
+       |
+       |
+       v
+
+Work-In-Progress Fiber
+
+
+
+After completion:
+
+
+Swap Trees
+
+
+
+This technique is called double buffering.
+
+
+
+============================================================
+OLD REACT VS REACT FIBER
+============================================================
+
+
+Old React:
+
+- Stack recursion
+- Synchronous rendering
+- Cannot pause work
+- Cannot cancel work
+- No priority system
+
+
+React Fiber:
+
+- Fiber objects
+- Incremental rendering
+- Can pause work
+- Can resume work
+- Can cancel work
+- Priority scheduling
+
+
+
+============================================================
+WORK LOOP IN REACT FIBER
+============================================================
+
+
+Fiber processes updates using a work loop.
+
+
+Flow:
+
+
+Start
+
+ |
+ v
+
+Take one Fiber
+
+ |
+ v
+
+Process Fiber
+
+ |
+ v
+
+Check browser priority
+
+ |
+ +------------+
+ |            |
+No           Yes
+ |            |
+ v            v
+
+Continue    Pause
+
+              |
+              v
+
+        Browser handles events
+
+              |
+              v
+
+           Resume
+
+
+
+============================================================
+SCHEDULING AND PRIORITY
+============================================================
+
+
+Fiber introduced priority-based scheduling.
+
+
+Example:
+
+
+High Priority:
+
+- User typing
+- Button clicks
+- Animations
+
+
+Medium Priority:
+
+- Loading data
+
+
+Low Priority:
+
+- Background rendering
+
+
+
+Example:
+
+
+User typing:
+
+Priority = High
+
+
+Loading comments:
+
+Priority = Low
+
+
+
+React handles important work first.
+
+
+
+============================================================
+RENDER PHASE AND COMMIT PHASE
+============================================================
+
+
+React Fiber has two phases.
+
+
+
+1. RENDER PHASE
+------------------------------------------------------------
+
+React creates the new Fiber tree.
+
+During this phase:
+
+- Work can pause
+- Work can restart
+- Work can be cancelled
+
+
+Example:
+
+
+Old Fiber Tree
+
+        |
+        |
+        v
+
+Create New Fiber Tree
+
+
+
+Nothing changes on screen yet.
+
+
+
+------------------------------------------------------------
+
+2. COMMIT PHASE
+------------------------------------------------------------
+
+React applies changes to the real DOM.
+
+
+Flow:
+
+
+Render Phase
+
+      |
+      v
+
+Find Changes
+
+      |
+      v
+
+Commit Phase
+
+      |
+      v
+
+Update DOM
+
+
+Commit phase cannot be interrupted.
+
+
+
+============================================================
+RECONCILIATION IN FIBER
+============================================================
+
+
+Reconciliation means comparing old and new UI trees.
+
+
+Example:
+
+
+Old:
+
+<h1>Hello</h1>
+
+
+New:
+
+<h1>Hello World</h1>
+
+
+React detects only text changed.
+
+
+It updates only:
+
+
+Hello
+
+to
+
+Hello World
+
+
+
+It does not recreate the entire DOM.
+
+
+
+============================================================
+FIBER AND VIRTUAL DOM
+============================================================
+
+
+Fiber does NOT replace Virtual DOM.
+
+
+Relationship:
+
+
+JSX
+
+ |
+
+ v
+
+React Elements
+
+ |
+
+ v
+
+Virtual DOM
+
+ |
+
+ v
+
+Fiber Tree
+
+ |
+
+ v
+
+Reconciliation
+
+ |
+
+ v
+
+Commit
+
+ |
+
+ v
+
+Real DOM
+
+
+
+Virtual DOM is still used.
+
+Fiber is the algorithm that manages updates.
+
+
+
+============================================================
+REAL EXAMPLE
+============================================================
+
+
+Component:
+
+
+function Counter(){
+
+ const [count,setCount] = useState(0);
+
+
+ return (
+
+    <button onClick={() =>
+       setCount(count+1)
+    }>
+
+       {count}
+
+    </button>
+
+ )
+
+}
+
+
+
+When button is clicked:
+
+
+Click
+
+ |
+
+ v
+
+setState()
+
+ |
+
+ v
+
+Create update
+
+ |
+
+ v
+
+Create Work-In-Progress Fiber
+
+ |
+
+ v
+
+Compare old Fiber
+
+ |
+
+ v
+
+Find changes
+
+ |
+
+ v
+
+Commit
+
+ |
+
+ v
+
+Update DOM
+
+
+
+Only the changed part updates.
+
+
+
+============================================================
+REAL WORLD EXAMPLE
+============================================================
+
+
+Imagine Instagram:
+
+
+Tasks:
+
+- Uploading images
+- Notifications
+- Animations
+- User typing comments
+
+
+Most important:
+
+Typing comment
+
+
+Less important:
+
+Loading advertisements
+
+
+Fiber allows:
+
+
+Typing
+
+    |
+    v
+
+Immediate update
+
+
+Advertisement
+
+    |
+    v
+
+Wait
+
+
+
+============================================================
+REACT 18 AND FIBER
+============================================================
+
+
+React Fiber enables modern React features:
+
+
+- Concurrent Rendering
+- Suspense
+- startTransition()
+- Selective Hydration
+
+
+These features depend on Fiber's ability to schedule
+and prioritize work.
+
+
+
+============================================================
+COMPLETE INTERNAL FLOW
+============================================================
+
+
+User Action
+
+      |
+      v
+
+setState()
+
+      |
+      v
+
+Create Update
+
+      |
+      v
+
+Scheduler Assigns Priority
+
+      |
+      v
+
+Build Work-In-Progress Fiber Tree
+
+      |
+      v
+
+Reconciliation
+
+      |
+      v
+
+Pause if required
+
+      |
+      v
+
+Resume Work
+
+      |
+      v
+
+Render Complete
+
+      |
+      v
+
+Commit Phase
+
+      |
+      v
+
+Update DOM
+
+      |
+      v
+
+Browser Paint
+
+
+
+============================================================
+INTERVIEW QUESTIONS
+============================================================
+
+
+Q1. What is React Fiber?
+
+
+Answer:
+
+React Fiber is React's reconciliation engine introduced
+in React 16. It breaks rendering work into smaller units
+and allows React to pause, resume, prioritize, and cancel
+updates.
+
+
+------------------------------------------------------------
+
+
+Q2. Why was React Fiber introduced?
+
+
+Answer:
+
+To solve performance problems caused by synchronous
+rendering and make applications more responsive.
+
+
+------------------------------------------------------------
+
+
+Q3. What is a Fiber node?
+
+
+Answer:
+
+A Fiber node is a JavaScript object representing a React
+component and storing information about its state, props,
+relationships, and update status.
+
+
+------------------------------------------------------------
+
+
+Q4. Does Fiber replace Virtual DOM?
+
+
+Answer:
+
+No.
+
+Fiber replaces the reconciliation algorithm, not the
+Virtual DOM.
+
+
+------------------------------------------------------------
+
+
+Q5. What are Fiber phases?
+
+
+Answer:
+
+1. Render Phase
+   - Creates new Fiber tree
+   - Can be interrupted
+
+
+2. Commit Phase
+   - Updates real DOM
+   - Cannot be interrupted
+
+
+
+============================================================
+SUMMARY
+============================================================
+
+
+React Fiber is the internal architecture that makes modern
+React fast.
+
+Main concepts:
+
+- Fiber = Unit of work
+- Fiber tree represents components
+- Work can be paused and resumed
+- Updates have priorities
+- Render phase prepares changes
+- Commit phase updates DOM
+- Virtual DOM still exists
+- Fiber enables Concurrent React
+
+
+============================================================
+END OF DOCUMENT
+============================================================
+
+
+
+
+
+
