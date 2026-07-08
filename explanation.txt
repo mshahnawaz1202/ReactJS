@@ -1,4 +1,4 @@
-==============================================================================
+C==============================================================================
                             REACT - SETUP & BASICS
 ==============================================================================
 
@@ -1333,4 +1333,722 @@ END OF DOCUMENT
 
 
 
+===========================================================================================================================================================================================================
+==============================================
+        Tailwind CSS and React Props
+==============================================
 
+
+==============================================
+1. Tailwind CSS Setup with Vite
+==============================================
+
+Tailwind CSS is a utility-first CSS framework.
+
+Instead of writing custom CSS:
+
+Example:
+
+.card {
+    background-color: black;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+
+Tailwind allows us to write styles directly in JSX:
+
+<div className="bg-black p-5 rounded-xl">
+    Card Content
+</div>
+
+
+----------------------------------------------
+Installing Tailwind CSS with Vite
+----------------------------------------------
+
+Create a React + Vite project:
+
+npm create vite@latest my-project
+
+
+Go into project:
+
+cd my-project
+
+
+Install Tailwind CSS:
+
+npm install tailwindcss @tailwindcss/vite
+
+
+Then configure Tailwind according to the official Vite setup.
+
+
+Tailwind works by scanning your React files and generating only the CSS classes that you use.
+
+Example:
+
+className="bg-red-500 text-white p-4"
+
+
+Tailwind generates CSS for:
+
+- background color
+- text color
+- padding
+
+
+==============================================
+2. Why We Use Components in React
+==============================================
+
+A component is a reusable piece of UI.
+
+Example:
+
+A Card component:
+
+Card.jsx
+
+function Card(){
+    return(
+        <div>
+            Card Design
+        </div>
+    )
+}
+
+
+Now we can use this component anywhere:
+
+App.jsx
+
+<Card />
+
+
+Instead of writing the same HTML multiple times, we create one component and reuse it.
+
+
+==============================================
+3. What are Props?
+==============================================
+
+Props means "Properties".
+
+Props are used to pass data from a parent component to a child component.
+
+
+Flow:
+
+
+        Parent Component
+              |
+              |
+              |  Props
+              ↓
+
+        Child Component
+
+
+
+Example:
+
+App.jsx
+
+
+<Card username="shahnawaz" />
+
+
+Here:
+
+username is a prop.
+
+The value:
+
+"shahnawaz"
+
+is passed to Card component.
+
+
+==============================================
+4. Why Do We Need Props?
+==============================================
+
+Without props:
+
+<Card />
+
+
+Every card will have the same data.
+
+
+Example:
+
+
+function Card(){
+
+return(
+    <h1>
+        Shahnawaz
+    </h1>
+)
+
+}
+
+
+
+If we want another user:
+
+Shah
+
+
+We have to create another component.
+
+This is not reusable.
+
+
+With props:
+
+
+<Card username="shahnawaz" />
+
+<Card username="shah" />
+
+
+Same component.
+
+Different data.
+
+
+
+Output:
+
+
+Card 1:
+
+Shahnawaz
+
+
+Card 2:
+
+Shah
+
+
+
+==============================================
+5. Passing Simple Props
+==============================================
+
+
+App.jsx
+
+
+<Card username="shahnawaz" />
+
+
+Card.jsx
+
+
+function Card(props){
+
+    console.log(props)
+
+}
+
+
+
+Output:
+
+{
+    username:"shahnawaz"
+}
+
+
+
+React automatically creates an object called props.
+
+
+Example:
+
+props = {
+
+    username:"shahnawaz"
+
+}
+
+
+
+So we can access the value:
+
+
+function Card(props){
+
+    console.log(props.username)
+
+}
+
+
+
+Output:
+
+shahnawaz
+
+
+
+==============================================
+6. Passing Multiple Props
+==============================================
+
+
+App.jsx
+
+
+<Card
+    username="shahnawaz"
+    age="20"
+    role="Developer"
+/>
+
+
+
+React converts it into:
+
+
+props = {
+
+ username:"shahnawaz",
+
+ age:"20",
+
+ role:"Developer"
+
+}
+
+
+
+Access:
+
+
+function Card(props){
+
+console.log(props.username)
+console.log(props.age)
+console.log(props.role)
+
+}
+
+
+
+==============================================
+7. Props are Objects
+==============================================
+
+
+When we write:
+
+
+<Card username="shahnawaz"/>
+
+
+React internally creates:
+
+
+props = {
+
+    username:"shahnawaz"
+
+}
+
+
+
+That is why we access values using:
+
+
+props.username
+
+
+
+==============================================
+8. Destructuring Props
+==============================================
+
+
+Instead of:
+
+
+function Card(props){
+
+console.log(props.username)
+
+}
+
+
+
+We can directly extract values:
+
+
+function Card({username}){
+
+console.log(username)
+
+}
+
+
+
+Both are same.
+
+
+
+Example:
+
+
+function Card({username, age}){
+
+return(
+
+<h1>
+    {username} - {age}
+</h1>
+
+)
+
+}
+
+
+
+Usage:
+
+
+<Card
+ username="shahnawaz"
+ age="20"
+/>
+
+
+
+Output:
+
+
+shahnawaz - 20
+
+
+
+==============================================
+9. Passing Objects as Props
+==============================================
+
+
+We can also pass objects.
+
+
+
+Example:
+
+
+let myObj = {
+
+    username:"shahnawaz",
+
+    age:20
+
+}
+
+
+
+Wrong:
+
+
+<Card myO = myObj />
+
+
+Why?
+
+
+Because JSX cannot understand normal JavaScript variables directly.
+
+
+
+Correct:
+
+
+<Card someObj={myObj} />
+
+
+
+Here:
+
+{} tells React:
+
+"Execute JavaScript code"
+
+
+
+React receives:
+
+
+props = {
+
+ someObj:{
+    username:"shahnawaz",
+    age:20
+ }
+
+}
+
+
+
+Access:
+
+
+function Card(props){
+
+console.log(props.someObj.username)
+
+}
+
+
+
+Output:
+
+
+shahnawaz
+
+
+
+==============================================
+10. Passing Arrays as Props
+==============================================
+
+
+Example:
+
+
+let newArr=[1,2,3]
+
+
+
+Passing:
+
+
+<Card someObj={newArr}/>
+
+
+
+Received:
+
+
+function Card(props){
+
+console.log(props.someObj)
+
+}
+
+
+
+Output:
+
+
+[1,2,3]
+
+
+
+==============================================
+11. Difference Between String and JavaScript Values
+==============================================
+
+
+
+String value:
+
+
+<Card username="shahnawaz"/>
+
+
+Here:
+
+shahnawaz is directly a string.
+
+
+
+JavaScript value:
+
+
+<Card username={myVariable}/>
+
+
+Here:
+
+{} tells React to evaluate JavaScript.
+
+
+
+Examples:
+
+
+<Card age={20}/>
+
+
+Number
+
+
+<Card data={myObj}/>
+
+
+Object
+
+
+<Card list={newArr}/>
+
+
+Array
+
+
+
+==============================================
+12. Complete Example
+==============================================
+
+
+App.jsx
+
+
+function App(){
+
+let user={
+
+    name:"Shahnawaz",
+
+    age:20
+
+}
+
+
+return(
+
+<Card user={user}/>
+
+)
+
+}
+
+
+
+Card.jsx
+
+
+function Card({user}){
+
+
+return(
+
+<div>
+
+<h1>
+{user.name}
+</h1>
+
+
+<p>
+{user.age}
+</p>
+
+
+</div>
+
+)
+
+}
+
+
+
+Output:
+
+
+Shahnawaz
+
+20
+
+
+
+==============================================
+13. Props vs State
+==============================================
+
+
+Props:
+
+- Data passed from parent to child
+- Read-only
+- Used for component reusability
+
+
+Example:
+
+
+<Card username="shahnawaz"/>
+
+
+
+State:
+
+- Data managed inside component
+- Can change over time
+- Uses hooks like useState()
+
+
+Example:
+
+
+const [count,setCount]=useState(0)
+
+
+
+==============================================
+Summary
+==============================================
+
+
+1. Tailwind CSS provides utility classes for styling React components.
+
+
+2. Components make UI reusable.
+
+
+3. Props allow data passing between components.
+
+
+4. Props are received as an object.
+
+
+5. Access props:
+
+
+function Card(props){
+
+props.username
+
+}
+
+
+
+6. Or use destructuring:
+
+
+function Card({username}){
+
+username
+
+}
+
+
+
+7. Use {} when passing JavaScript values:
+
+
+<Card age={20}/>
+
+<Card data={myObj}/>
+
+
+8. Props make React components dynamic and reusable.
