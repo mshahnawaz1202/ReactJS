@@ -2051,4 +2051,30 @@ username
 <Card data={myObj}/>
 
 
-8. Props make React components dynamic and reusable.
+8. Props make React components dynamic and reusable
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+use call back in react
+
+https://react.dev/reference/react/useCallback
+
+
+useEffect hook
+
+https://react.dev/reference/react/useEffect
+
+useRef hook
