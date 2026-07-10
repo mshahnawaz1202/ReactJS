@@ -2066,15 +2066,595 @@ username
 
 
 
+====================================================
+React Hooks Explanation
+useCallback, useEffect, and useRef
+====================================================
 
 
-use call back in react
+1. useCallback Hook in React
+============================
 
+Official Documentation:
 https://react.dev/reference/react/useCallback
 
 
-useEffect hook
+What is useCallback?
+--------------------
 
+useCallback is a React Hook that is used to memorize (cache) a function between
+renders.
+
+Normally, whenever a React component re-renders, all functions inside that
+component are recreated in memory.
+
+useCallback prevents unnecessary recreation of functions by returning the same
+function reference until its dependencies change.
+
+
+Syntax:
+-------
+
+const memoizedFunction = useCallback(() => {
+    // function logic
+}, [dependencies]);
+
+
+Parameters:
+-----------
+
+1. Function:
+   The function that you want to memorize.
+
+2. Dependency Array:
+   Values that determine when the function should be recreated.
+
+
+Example Without useCallback:
+----------------------------
+
+function App() {
+
+    const handleClick = () => {
+        console.log("Button clicked");
+    };
+
+    return (
+        <button onClick={handleClick}>
+            Click
+        </button>
+    );
+}
+
+
+Problem:
+
+Every time App renders, handleClick is recreated as a new function.
+
+If this function is passed to a child component, the child may re-render
+unnecessarily.
+
+
+Example With useCallback:
+-------------------------
+
+import { useCallback } from "react";
+
+
+function App() {
+
+    const handleClick = useCallback(() => {
+        console.log("Button clicked");
+    }, []);
+
+
+    return (
+        <button onClick={handleClick}>
+            Click
+        </button>
+    );
+}
+
+
+Now React keeps the same function reference between renders.
+
+
+When to use useCallback:
+------------------------
+
+1. Passing functions to memoized child components.
+
+Example:
+
+const Child = React.memo(({ onClick }) => {
+    console.log("Child Render");
+    return <button onClick={onClick}>Click</button>;
+});
+
+
+function Parent() {
+
+    const handleClick = useCallback(() => {
+        console.log("Clicked");
+    }, []);
+
+
+    return <Child onClick={handleClick} />;
+}
+
+
+2. When a function is used as a dependency in useEffect.
+
+
+Example:
+
+const fetchData = useCallback(() => {
+    console.log("Fetching data");
+}, []);
+
+
+useEffect(() => {
+    fetchData();
+}, [fetchData]);
+
+
+Important Notes:
+----------------
+
+- useCallback does not make code faster automatically.
+- Use it only when function reference stability is required.
+- Overusing useCallback can make code harder to understand.
+
+
+
+====================================================
+2. useEffect Hook in React
+====================================================
+
+
+Official Documentation:
 https://react.dev/reference/react/useEffect
 
-useRef hook
+
+What is useEffect?
+------------------
+
+useEffect is a React Hook used to perform side effects in functional
+components.
+
+Side effects are operations that happen outside the normal rendering process.
+
+
+Examples of Side Effects:
+
+- API calls
+- Updating document title
+- Timers
+- Subscribing to events
+- Working with browser APIs
+- Connecting to external services
+
+
+Syntax:
+-------
+
+useEffect(() => {
+
+    // side effect code
+
+    return () => {
+        // cleanup code
+    };
+
+}, [dependencies]);
+
+
+
+How useEffect Works:
+--------------------
+
+useEffect runs after the component renders.
+
+
+Example:
+
+import { useEffect } from "react";
+
+
+function App() {
+
+    useEffect(() => {
+        console.log("Component Mounted");
+    }, []);
+
+
+    return <h1>Hello React</h1>;
+}
+
+
+Output:
+
+Component Mounted
+
+
+The empty dependency array means the effect runs only once after the first
+render.
+
+
+
+Dependency Array Behavior:
+--------------------------
+
+
+1. No Dependency Array
+
+useEffect(() => {
+
+    console.log("Runs after every render");
+
+});
+
+
+Runs after every component render.
+
+
+
+2. Empty Dependency Array
+
+useEffect(() => {
+
+    console.log("Runs only once");
+
+}, []);
+
+
+Runs only when the component mounts.
+
+
+
+3. With Dependencies
+
+useEffect(() => {
+
+    console.log("Value changed");
+
+}, [count]);
+
+
+Runs whenever count changes.
+
+
+
+Cleanup Function:
+-----------------
+
+Cleanup is used to remove resources before the component is destroyed or before
+the effect runs again.
+
+
+Example:
+
+useEffect(() => {
+
+    const timer = setInterval(() => {
+        console.log("Running...");
+    }, 1000);
+
+
+    return () => {
+        clearInterval(timer);
+    };
+
+}, []);
+
+
+The cleanup function stops the timer when the component unmounts.
+
+
+
+Common useEffect Examples:
+--------------------------
+
+
+API Call:
+
+useEffect(() => {
+
+    fetch("https://api.example.com/users")
+    .then(response => response.json())
+    .then(data => console.log(data));
+
+}, []);
+
+
+
+Update Page Title:
+
+useEffect(() => {
+
+    document.title = "React App";
+
+}, []);
+
+
+
+Important Notes:
+----------------
+
+- Do not use useEffect for calculations that can happen during rendering.
+- Keep dependency arrays correct.
+- Avoid unnecessary API calls.
+- Always cleanup subscriptions, timers, and listeners.
+
+
+
+====================================================
+3. useRef Hook in React
+====================================================
+
+
+Official Documentation:
+https://react.dev/reference/react/useRef
+
+
+What is useRef?
+---------------
+
+useRef is a React Hook that allows you to store a mutable value that persists
+between renders.
+
+Changing a ref value does not cause the component to re-render.
+
+
+Syntax:
+
+const reference = useRef(initialValue);
+
+
+
+useRef returns an object:
+
+{
+    current: value
+}
+
+
+
+Example:
+
+import { useRef } from "react";
+
+
+function App() {
+
+    const inputRef = useRef(null);
+
+
+    return (
+
+        <input ref={inputRef} />
+
+    );
+
+}
+
+
+Accessing DOM Element:
+
+inputRef.current.focus();
+
+
+
+Common Uses of useRef:
+----------------------
+
+
+1. Accessing DOM Elements
+
+Example:
+
+function Form() {
+
+    const inputRef = useRef();
+
+
+    function focusInput() {
+
+        inputRef.current.focus();
+
+    }
+
+
+    return (
+
+        <>
+            <input ref={inputRef} />
+
+            <button onClick={focusInput}>
+                Focus Input
+            </button>
+        </>
+
+    );
+
+}
+
+
+
+2. Storing Previous Values
+
+
+Example:
+
+function App({count}) {
+
+    const previousCount = useRef();
+
+
+    useEffect(() => {
+
+        previousCount.current = count;
+
+    }, [count]);
+
+
+    return (
+
+        <h1>
+            Previous: {previousCount.current}
+        </h1>
+
+    );
+
+}
+
+
+
+3. Storing Mutable Values
+
+
+Example:
+
+const timerId = useRef(null);
+
+
+timerId.current = setTimeout(() => {
+
+    console.log("Timer");
+
+}, 1000);
+
+
+
+useRef vs useState:
+-------------------
+
+
+useState:
+
+- Stores data.
+- Updating value causes re-render.
+- Used for UI-related values.
+
+
+useRef:
+
+- Stores mutable values.
+- Updating value does not cause re-render.
+- Used for DOM access and persistent values.
+
+
+
+Example:
+
+
+useState:
+
+const [count, setCount] = useState(0);
+
+
+setCount(10);
+
+Component re-renders.
+
+
+
+useRef:
+
+const count = useRef(0);
+
+
+count.current = 10;
+
+Component does not re-render.
+
+
+
+====================================================
+useCallback vs useEffect vs useRef
+====================================================
+
+
+useCallback:
+
+Purpose:
+Memorize functions.
+
+Used For:
+- Prevent unnecessary function recreation.
+- Optimize child component rendering.
+
+
+Example:
+
+const handleClick = useCallback(() => {
+
+}, []);
+
+
+
+----------------------------------------------------
+
+
+useEffect:
+
+Purpose:
+Perform side effects after rendering.
+
+Used For:
+- API calls.
+- Timers.
+- Subscriptions.
+- External operations.
+
+
+Example:
+
+useEffect(() => {
+
+}, []);
+
+
+
+----------------------------------------------------
+
+
+useRef:
+
+Purpose:
+Store values without causing re-render.
+
+Used For:
+- DOM references.
+- Previous values.
+- Mutable variables.
+
+
+Example:
+
+const ref = useRef();
+
+
+
+====================================================
+Summary
+====================================================
+
+
+useCallback:
+--------------
+Caches functions and keeps the same function reference.
+
+
+useEffect:
+-----------
+Handles side effects after rendering.
+
+
+useRef:
+--------
+Stores mutable values and accesses DOM elements without re-rendering.
+
+
+Together these hooks help React applications become more efficient,
+organized, and easier to manage.
