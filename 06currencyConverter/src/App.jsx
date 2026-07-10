@@ -6,7 +6,7 @@ function App() {
 
   return (
     <>
-     
+     <h1 className='text-3xl bg-orange-500 text  text-center '>Currency Converter</h1>
     </>
   )
 }
