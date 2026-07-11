@@ -1,35 +1,22 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 
+function UseCurrencyInfo(currency) {
+    const [data, setData] = useState({});
 
-// let url = `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/${currency}.json`
+    useEffect(() => {
+        fetch(`https://latest.currency-api.pages.dev/v1/currencies/${currency}.json`)
+            .then((res) => res.json())
+            .then((res) => {
+                console.log(res);
+                setData(res[currency]);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
 
-function useCurrencyInfo(currency){
-    const [data,setData] = useState({})
-    useEffect(()=>{
-        fetch(`https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/${currency}.json`)
-        .then((res) => res.json())
-        .then((res) => setData(res[currency]))
-        console.log(data);
-        
+    }, [currency]);
 
-    },[currency])
-    console.log(data);
-    return data
-
-
+    return data;
 }
 
-export default useCurrencyInfo;
-
-
-
-
-
-
-
-
-
-
-
-
-
+export default UseCurrencyInfo;

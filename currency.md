@@ -24,7 +24,7 @@ function InputBox({
                     label
                 </label>
                 <input
-                  
+                
                     className="outline-none w-full bg-transparent py-1.5"
                     type="number"
                     placeholder="Amount"
@@ -34,13 +34,13 @@ function InputBox({
                 <p className="text-black/40 mb-2 w-full">Currency Type</p>
                 <select
                     className="rounded-lg px-1 py-1 bg-gray-100 cursor-pointer outline-none"
-                  
+                
                 >
-                  
+                
                         <option value="usd">
                             usd
                         </option>
-              
+            
                 </select>
             </div>
         </div>
@@ -68,20 +68,20 @@ function App() {
                     <form
                         onSubmit={(e) => {
                             e.preventDefault();
-                         
+                       
                         }}
                     >
                         <div className="w-full mb-1">
                             <InputBox
                                 label="From"
-                              
+                            
                             />
                         </div>
                         <div className="relative w-full h-0.5">
                             <button
                                 type="button"
                                 className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-white rounded-md bg-blue-600 text-white px-2 py-0.5"
-                              
+                            
                             >
                                 swap
                             </button>
@@ -89,7 +89,7 @@ function App() {
                         <div className="w-full mt-1 mb-4">
                             <InputBox
                                 label="To"
-                              
+                            
                             />
                         </div>
                         <button type="submit" className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg">
@@ -100,5 +100,4 @@ function App() {
             </div>
         </div>
     );
-
 ```
