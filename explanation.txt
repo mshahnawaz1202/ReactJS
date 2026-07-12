@@ -2950,3 +2950,860 @@ Summary
 
 
 
+
+
+
+
+
+
+
+
+
+=============================================================================================================================================================
+                                      React Router
+=============================================================================================================================================================
+
+
+=====================
+What is React Router?
+=====================
+
+React Router is a library used for handling navigation and routing in React applications.
+
+Normally, when we use HTML:
+
+<a href="/about">About</a>
+
+the browser reloads the complete page.
+
+But React is a Single Page Application (SPA), where we don't want full page refresh.
+React Router allows us to change components/pages without refreshing the browser.
+
+
+Install React Router
+====================
+
+After creating a React project, go inside the project directory and install:
+
+npm install react-router-dom
+
+
+Example:
+
+npm create vite@latest my-app
+
+cd my-app
+
+npm install
+
+npm install react-router-dom
+
+
+
+=============================================================================================================================================================
+                                      Link and NavLink
+=============================================================================================================================================================
+
+
+=====================
+Link
+=====================
+
+Link is the React Router replacement for the normal HTML <a> tag.
+
+HTML:
+
+<a href="/about">
+    About
+</a>
+
+
+Problem:
+
+The <a> tag refreshes the complete page.
+
+Flow:
+
+Click Link
+    |
+    |
+Browser Request
+    |
+    |
+Reload Entire Application
+
+
+In React, we use:
+
+import { Link } from "react-router-dom"
+
+
+Example:
+
+<Link to="/about">
+    About
+</Link>
+
+
+Advantages:
+
+- No page refresh
+- Faster navigation
+- Maintains React state
+- Works with SPA architecture
+
+
+
+=====================
+NavLink
+=====================
+
+NavLink is an advanced version of Link.
+
+It provides extra functionality to know:
+
+1. Which route is currently active
+2. Which route is pending/loading
+
+
+Import:
+
+import { NavLink } from "react-router-dom"
+
+
+
+Example:
+
+<NavLink 
+    to="/about"
+>
+    About
+</NavLink>
+
+
+
+The main difference:
+
+Link:
+------
+Only provides navigation.
+
+
+NavLink:
+--------
+Provides navigation + active route information.
+
+
+
+=============================================================================================================================================================
+                            Using isActive and isPending in NavLink
+=============================================================================================================================================================
+
+
+NavLink allows a callback function inside className.
+
+
+Example:
+
+
+<NavLink
+
+    to="/about"
+
+    className={({isActive, isPending}) =>
+
+        `${isActive ? "text-blue-500" : "text-gray-500"}
+         ${isPending ? "opacity-50" : ""}`
+
+    }
+
+>
+
+About
+
+</NavLink>
+
+
+
+Parameters:
+
+isActive
+---------
+
+It tells whether the current route is active or not.
+
+
+Example:
+
+Current URL:
+
+localhost:5173/about
+
+
+NavLink:
+
+About
+
+
+Then:
+
+isActive = true
+
+
+
+isPending
+----------
+
+It tells whether navigation is currently in progress.
+
+
+Example:
+
+User clicks a route.
+
+During loading:
+
+isPending = true
+
+
+
+=============================================================================================================================================================
+                                      Router Setup
+=============================================================================================================================================================
+
+
+In React Router we create routes using:
+
+createBrowserRouter()
+
+and connect routes using:
+
+RouterProvider
+
+
+
+Import in main.jsx:
+
+
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
+
+
+
+Example:
+
+
+const router = createBrowserRouter([
+
+    {
+        path: "/",
+        element: <Home/>
+    }
+
+])
+
+
+
+Then:
+
+
+<RouterProvider router={router}/>
+
+
+
+=============================================================================================================================================================
+                                      Outlet
+=============================================================================================================================================================
+
+
+Outlet is used for nested routing.
+
+It acts as a placeholder where child routes are rendered.
+
+
+
+Example Layout:
+
+
+
+function Layout(){
+
+    return (
+
+        <>
+
+            <Header/>
+
+            <Outlet/>
+
+            <Footer/>
+
+        </>
+
+    )
+
+}
+
+
+
+Here:
+
+
+Header
+------
+Always remains same.
+
+
+Footer
+------
+Always remains same.
+
+
+Outlet
+------
+Changes according to route.
+
+
+
+Flow:
+
+
+Browser URL
+
+     |
+     |
+React Router
+
+     |
+     |
+Layout Component
+
+     |
+     |
+----------------------
+Header
+----------------------
+
+Outlet
+
+(Home/About/Contact)
+
+----------------------
+
+Footer
+----------------------
+
+
+
+Example:
+
+
+/home
+
+Shows:
+
+Header
+Home Component
+Footer
+
+
+
+/about
+
+Shows:
+
+Header
+About Component
+Footer
+
+
+
+/contact
+
+Shows:
+
+Header
+Contact Component
+Footer
+
+
+
+=============================================================================================================================================================
+                                      Creating Routes
+=============================================================================================================================================================
+
+
+There are two common methods.
+
+
+=============================================================================================================================================================
+Method 1: Object Based Routing
+=============================================================================================================================================================
+
+
+
+const router = createBrowserRouter([
+
+    {
+
+        path: "/",
+
+        element: <Layout/>,
+
+
+        children:[
+
+
+            {
+
+                path:"",
+
+                element:<Home/>
+
+            },
+
+
+            {
+
+                path:"about",
+
+                element:<About/>
+
+            },
+
+
+            {
+
+                path:"contact",
+
+                element:<Contact/>
+
+            }
+
+
+        ]
+
+    }
+
+])
+
+
+
+Explanation:
+
+
+Parent Route:
+
+path: "/"
+
+element: Layout
+
+
+
+Child Routes:
+
+/       -> Home
+
+/about  -> About
+
+/contact -> Contact
+
+
+
+Because Layout contains:
+
+<Outlet/>
+
+
+children components appear there.
+
+
+
+=============================================================================================================================================================
+Method 2: Using createRoutesFromElements
+=============================================================================================================================================================
+
+
+First import:
+
+import {
+
+    createBrowserRouter,
+
+    createRoutesFromElements,
+
+    Route
+
+}
+
+from "react-router-dom"
+
+
+
+Example:
+
+
+
+const router = createBrowserRouter(
+
+    createRoutesFromElements(
+
+        <Route 
+
+            path="/"
+
+            element={<Layout/>}
+
+        >
+
+
+            <Route
+
+                path=""
+
+                element={<Home/>}
+
+            />
+
+
+            <Route
+
+                path="about"
+
+                element={<About/>}
+
+            />
+
+
+            <Route
+
+                path="contact"
+
+                element={<Contact/>}
+
+            />
+
+
+        </Route>
+
+    )
+
+)
+
+
+
+This method uses JSX syntax instead of objects.
+
+
+
+Both methods create the same routing structure.
+
+
+
+=============================================================================================================================================================
+                                      useParams()
+=============================================================================================================================================================
+
+
+useParams is a React Router hook used to access dynamic URL parameters.
+
+
+
+Example:
+
+
+Route:
+
+
+<Route 
+
+    path="/user/:id"
+
+    element={<Profile/>}
+
+/>
+
+
+
+URL:
+
+
+localhost:5173/user/101
+
+
+
+Here:
+
+:id = 101
+
+
+
+Inside Profile Component:
+
+
+
+import { useParams } from "react-router-dom"
+
+
+
+function Profile(){
+
+    const {id} = useParams()
+
+
+    return (
+
+        <h1>
+            User ID: {id}
+        </h1>
+
+    )
+
+}
+
+
+
+Output:
+
+
+User ID: 101
+
+
+
+Real Example:
+
+
+/product/500
+
+
+id = 500
+
+
+Then we can fetch product details from database/API.
+
+
+
+=============================================================================================================================================================
+                                      Loader
+=============================================================================================================================================================
+
+
+Loader is used to fetch data before rendering a route.
+
+
+
+Without Loader:
+
+
+Component Render
+
+      |
+
+      |
+
+useEffect()
+
+      |
+
+      |
+
+Fetch API
+
+      |
+
+      |
+
+Update UI
+
+
+
+Problem:
+
+User sees loading state.
+
+
+
+With Loader:
+
+
+Route Request
+
+      |
+
+      |
+
+Loader runs
+
+      |
+
+      |
+
+Data fetched
+
+      |
+
+      |
+
+Component renders with data
+
+
+
+Example:
+
+
+const router = createBrowserRouter([
+
+
+{
+
+    path:"/users",
+
+    element:<Users/>,
+
+    loader: async()=>{
+
+        const response = await fetch(
+            "https://api.example.com/users"
+        )
+
+        return response.json()
+
+    }
+
+}
+
+
+])
+
+
+
+Inside Component:
+
+
+import { useLoaderData } from "react-router-dom"
+
+
+
+function Users(){
+
+
+    const users = useLoaderData()
+
+
+    return (
+
+        <div>
+
+            {
+                users.map(user=>(
+
+                    <h1>
+                        {user.name}
+                    </h1>
+
+                ))
+            }
+
+        </div>
+
+    )
+
+}
+
+
+
+Advantages of Loader:
+
+- Data loads before component renders
+- Better user experience
+- Cleaner code
+- Avoids multiple useEffect calls
+
+
+
+=============================================================================================================================================================
+                                      Complete React Router Flow
+=============================================================================================================================================================
+
+
+User clicks NavLink
+
+        |
+
+        |
+
+React Router checks URL
+
+        |
+
+        |
+
+Find matching Route
+
+        |
+
+        |
+
+Run Loader (if available)
+
+        |
+
+        |
+
+Render Layout
+
+        |
+
+        |
+
+Render Child Component inside Outlet
+
+        |
+
+        |
+
+Update UI without refreshing page
+
+
+
+=============================================================================================================================================================
+Summary
+=============================================================================================================================================================
+
+
+React Router:
+    Handles navigation in React SPA.
+
+
+Link:
+    Navigation without page refresh.
+
+
+NavLink:
+    Link + active route information.
+
+
+Outlet:
+    Placeholder for child routes.
+
+
+createBrowserRouter:
+    Creates routing configuration.
+
+
+RouterProvider:
+    Connects router with React app.
+
+
+useParams:
+    Gets dynamic URL values.
+
+
+Loader:
+    Fetches data before rendering component.
+
+
+Nested Routing:
+    Keeps common UI like Header/Footer while changing page content.
+
+
+=============================================================================================================================================================
