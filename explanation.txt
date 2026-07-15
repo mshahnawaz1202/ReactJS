@@ -3806,18 +3806,6 @@ Nested Routing:
     Keeps common UI like Header/Footer while changing page content.
 
 
-==================================================================================================================================================================================
-
-================================
-    Context API + Redux
-================================
-
-
-Redux => Redux TOOLKIT  (RTK)
-
-react-redux
-
-https://react.dev/reference/react/useContext
 
 
 
@@ -3834,3 +3822,652 @@ https://react.dev/reference/react/useContext
 
 
 
+    
+
+=============================================================================================================================================================
+=========================================
+            Context API
+=========================================
+
+What is Context API?
+Context API is React's built-in feature for sharing data globally.
+It allows multiple components to access the same data without passing props manually.
+
+It solves the problem called:
+"Props Drilling"
+
+Props Drilling:
+Passing data from Parent -> Child -> GrandChild -> GreatGrandChild
+even if intermediate components don't need that data.
+
+Example without Context:
+
+<App user="Shah Nawaz">
+    ↓
+<Navbar user="Shah Nawaz">
+    ↓
+<Header user="Shah Nawaz">
+    ↓
+<Profile user="Shah Nawaz"/>
+
+Every component passes the same prop.
+
+This becomes difficult in large projects.
+
+Context API solves this.
+
+
+=============================================================================================================================================================
+=========================================
+            Real Life Example
+=========================================
+
+Imagine a University.
+
+Vice Chancellor
+      |
+      |
+-------------------------
+|           |          |
+Teacher    Staff     Students
+
+Instead of every department asking the Vice Chancellor
+again and again for information,
+
+The VC announces it once.
+
+Everyone can access it.
+
+Context API works exactly like this.
+
+Provider stores the data.
+
+Any component inside Provider can access that data.
+
+
+=============================================================================================================================================================
+=========================================
+            Context API Flow
+=========================================
+
+                 Provider
+                    |
+        -------------------------
+        |          |           |
+      Login      Card       Profile
+        |                        |
+        |________________________|
+                 Shared Data
+
+
+Only components inside Provider
+can access Context.
+
+
+=============================================================================================================================================================
+=========================================
+            Step 1
+      Create Context
+=========================================
+
+UserContext.js
+
+import React from "react";
+
+const UserContext = React.createContext()
+
+export default UserContext
+
+
+Explanation
+
+React.createContext()
+
+creates an empty global storage.
+
+Initially it has no data.
+
+Think of it as creating an empty locker.
+
+Right now:
+
+UserContext
+
+contains nothing.
+
+Later Provider will fill it.
+
+
+=============================================================================================================================================================
+=========================================
+            Step 2
+        Create Provider
+=========================================
+
+UserContextProvider.js
+
+const UserContextProvider = ({children})=>{
+
+    const [user,setUser] = React.useState(null)
+
+    return(
+        <UserContext.Provider value={{user,setUser}}>
+            {children}
+        </UserContext.Provider>
+    )
+}
+
+Explanation
+
+Provider is responsible for storing data.
+
+const [user,setUser] = React.useState(null)
+
+Initially
+
+user = null
+
+No one is logged in.
+
+Provider wraps all components.
+
+<UserContext.Provider value={{user,setUser}}>
+    {children}
+</UserContext.Provider>
+
+"value" is the global data.
+
+Anything inside value becomes available
+to every child component.
+
+Global Data:
+
+{
+    user,
+    setUser
+}
+
+Now every child component can use
+
+user
+
+and
+
+setUser
+
+
+=============================================================================================================================================================
+=========================================
+        Why {children} ?
+=========================================
+
+Suppose App.jsx
+
+<UserContextProvider>
+
+    <Login/>
+
+    <Profile/>
+
+</UserContextProvider>
+
+Everything between opening and closing tag
+
+becomes
+
+children
+
+So
+
+children =
+
+<>
+    <Login/>
+    <Profile/>
+</>
+
+Provider renders those components.
+
+Without children,
+
+nothing inside Provider would appear.
+
+
+=============================================================================================================================================================
+=========================================
+        App Structure
+=========================================
+
+<App>
+
+<UserContextProvider>
+
+    <Login/>
+
+    <Profile/>
+
+</UserContextProvider>
+
+</App>
+
+
+After Provider wraps them,
+
+both Login and Profile
+share the same data.
+
+
+=============================================================================================================================================================
+=========================================
+        Step 3
+    Access Context using useContext
+=========================================
+
+Inside Login
+
+const {setUser} = useContext(UserContext)
+
+Explanation
+
+useContext(UserContext)
+
+reads data stored inside Provider.
+
+Provider value was
+
+{
+    user,
+    setUser
+}
+
+So here
+
+const {setUser}
+
+extracts only setUser.
+
+If needed
+
+const {user,setUser}
+
+can access both.
+
+
+=============================================================================================================================================================
+=========================================
+        Login Component Flow
+=========================================
+
+const [username,setUsername] = useState('')
+
+Stores username input.
+
+Initially
+
+username = ""
+
+-------------------------------------------------
+
+const [password,setPassword] = useState('')
+
+Stores password input.
+
+Initially
+
+password = ""
+
+-------------------------------------------------
+
+<input
+
+value={username}
+
+onChange={(e)=>setUsername(e.target.value)}
+
+>
+
+Whenever user types
+
+A
+
+username = "A"
+
+AB
+
+username = "AB"
+
+ABC
+
+username = "ABC"
+
+Same happens for password.
+
+
+=============================================================================================================================================================
+=========================================
+        Handle Submit
+=========================================
+
+const handleSubmit = (e)=>{
+
+    e.preventDefault()
+
+    setUser({
+        username,
+        password
+    })
+
+}
+
+Explanation
+
+Suppose
+
+username = Shah
+
+password = 12345
+
+After clicking Submit
+
+setUser({
+
+    username:"Shah",
+
+    password:"12345"
+
+})
+
+updates the global context.
+
+Before
+
+user = null
+
+After
+
+user = {
+
+    username:"Shah",
+
+    password:"12345"
+
+}
+
+Every component using Context
+gets updated automatically.
+
+
+=============================================================================================================================================================
+=========================================
+        Step 4
+        Profile Component
+=========================================
+
+const {user} = useContext(UserContext)
+
+Reads user from global context.
+
+Initially
+
+user = null
+
+
+Then
+
+if(!user){
+
+    return <div>Please Login First</div>
+
+}
+
+Since no user exists,
+
+Output
+
+Please Login First
+
+
+=============================================================================================================================================================
+=========================================
+        After Login
+=========================================
+
+Suppose Login stores
+
+setUser({
+
+    username:"Shah",
+
+    password:"12345"
+
+})
+
+Now Profile runs again.
+
+user is no longer null.
+
+So
+
+return
+
+<div>
+
+Welcome {user.username}
+
+</div>
+
+Output
+
+Welcome Shah
+
+
+Notice
+
+Profile never received props.
+
+Still it knows username.
+
+That is the power of Context API.
+
+
+=============================================================================================================================================================
+=========================================
+        Complete Flow
+=========================================
+
+User types
+
+Username = Shah
+
+Password = 12345
+
+        |
+        |
+        ▼
+
+handleSubmit()
+
+        |
+        |
+        ▼
+
+setUser({
+
+username:"Shah",
+
+password:"12345"
+
+})
+
+        |
+        |
+        ▼
+
+Provider updates
+
+        |
+        |
+        ▼
+
+Global Context changes
+
+        |
+        |
+        ▼
+
+Profile automatically re-renders
+
+        |
+        |
+        ▼
+
+Output
+
+Welcome Shah
+
+
+=============================================================================================================================================================
+=========================================
+        Data Flow Diagram
+=========================================
+
+                   UserContext
+
+                        ▲
+                        |
+            createContext()
+
+                        |
+                        ▼
+
+             UserContextProvider
+
+      user = null
+
+      setUser()
+
+                        |
+                        |
+         value={{user,setUser}}
+
+                        |
+        --------------------------------
+        |                              |
+        |                              |
+        ▼                              ▼
+
+      Login                        Profile
+
+useContext()                  useContext()
+
+setUser()                     user
+
+        |                         |
+        |_________________________|
+
+             Shared Global Data
+
+
+=============================================================================================================================================================
+=========================================
+        Why useContext()?
+=========================================
+
+Without useContext
+
+You cannot read Context data.
+
+Syntax
+
+const value = useContext(UserContext)
+
+or
+
+const {user,setUser} = useContext(UserContext)
+
+
+=============================================================================================================================================================
+=========================================
+        Why Context API?
+=========================================
+
+Advantages
+
+✔ No Props Drilling
+
+✔ Built into React
+
+✔ Easy to use
+
+✔ Global State Sharing
+
+✔ Cleaner Code
+
+✔ Automatic Re-render when Context changes
+
+
+=============================================================================================================================================================
+=========================================
+        Limitations
+=========================================
+
+Context API is best for
+
+✔ Logged-in User
+
+✔ Theme
+
+✔ Language
+
+✔ Dark Mode
+
+✔ Authentication
+
+✔ Small Global Data
+
+Not recommended for
+
+Huge Applications
+
+Very Complex State
+
+Thousands of updates
+
+For those,
+
+Redux Toolkit (RTK)
+is a better choice.
+
+
+=============================================================================================================================================================
+=========================================
+        Context API vs Redux Toolkit
+=========================================
+
+Context API
+
+✔ Built into React
+✔ Easy Setup
+✔ Small Apps
+✔ Authentication
+✔ Theme
+✔ Language
+
+Redux Toolkit
+
+✔ External Library
+✔ Better Performance
+✔ Large Projects
+✔ Predictable State
+✔ Powerful DevTools
+✔ Middleware Support
+✔ Async API Handling
+
+
+Rule
+
+Small Project
+→ Context API
+
+Large Enterprise Project
+→ Redux Toolkit (RTK)
