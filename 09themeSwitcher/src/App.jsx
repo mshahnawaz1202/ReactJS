@@ -1,10 +1,26 @@
-
+import { useEffect, useState } from "react"
+import { ThemeProvider } from "./contexts/theme"
 
 function App() {
+  const [themeMode,setTheme] = useState('dark')
   
+  const darkTheme = () =>{
+    setTheme('dark')
+  }
+
+  const lightTheme = () =>{
+    setTheme('light')
+  }
+
+  // actual change in theme
+
+  useEffect(() => {
+    document.querySelector('html').classList.remove('light','dark')
+    document.querySelector('html').classList.add(themeMode)
+  },[themeMode])
 
   return (
-    <>
+    <ThemeProvider value={{themeMode,darkTheme,lightTheme}}>
 
       <div className="flex flex-wrap min-h-screen items-center">
         <div className="w-full">
@@ -18,7 +34,7 @@ function App() {
         </div>
       </div>
 
-    </>
+    </ThemeProvider>
   )
 }
 
