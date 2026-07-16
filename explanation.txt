@@ -4493,23 +4493,296 @@ Large Enterprise Project
 
 
 =========================================================================================================================================================================
+==================================
+        Local Storage
+==================================
+
+Documentation
+https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
+
+
+What is Local Storage?
+Local Storage is a Web Storage API provided by the browser that allows us to store data in the user's browser as key-value pairs.
+
+- Data remains saved even after the browser is closed.
+- Data is not sent to the server.
+- Data is stored per website (origin).
+- Only strings can be stored directly.
+
+Storage Limit
+- Approximately 5MB to 10MB depending on the browser.
 
 ==================================
-    Local Storage
+        Basic Syntax
 ==================================
 
+Save Data
+
+localStorage.setItem("lastname", "Smith");
+
+Read Data
+
+const lastname = localStorage.getItem("lastname");
+
+Remove One Item
+
+localStorage.removeItem("lastname");
+
+Remove All Items
+
+localStorage.clear();
 
 
+==================================
+        Methods
+==================================
+
+1. localStorage.setItem(key, value)
+
+Purpose:
+Stores data in the browser.
+
+Syntax:
+
+localStorage.setItem(key, value);
+
+Example:
+
+localStorage.setItem("username", "Shah Nawaz");
+
+Result:
+
+username => Shah Nawaz
 
 
+----------------------------------
+
+2. localStorage.getItem(key)
+
+Purpose:
+Retrieves data from Local Storage.
+
+Syntax:
+
+localStorage.getItem(key);
+
+Example:
+
+const username = localStorage.getItem("username");
+
+console.log(username);
+
+Output:
+
+Shah Nawaz
+
+If the key does not exist:
+
+null
 
 
+----------------------------------
+
+3. localStorage.removeItem(key)
+
+Purpose:
+Removes a specific key and its value.
+
+Syntax:
+
+localStorage.removeItem(key);
+
+Example:
+
+localStorage.removeItem("username");
 
 
+----------------------------------
+
+4. localStorage.clear()
+
+Purpose:
+Removes every item stored in Local Storage for the current website.
+
+Syntax:
+
+localStorage.clear();
+
+Example:
+
+localStorage.clear();
 
 
+==================================
+        Parameters
+==================================
+
+Parameter     Description
+
+key           Required.
+              Name of the item to store.
+
+value         Required.
+              Value associated with the key.
 
 
+==================================
+        Return Value
+==================================
+
+Method                  Returns
+
+setItem()               undefined
+
+getItem()               Stored value or null
+
+removeItem()            undefined
+
+clear()                 undefined
+
+
+==================================
+        Important Note
+==================================
+
+Local Storage stores ONLY strings.
+
+If you save an object directly:
+
+const user = {
+    name: "Ali",
+    age: 20
+};
+
+localStorage.setItem("user", user);
+
+Output:
+
+"[object Object]"
+
+This is NOT useful.
+
+
+==================================
+        Storing Objects
+==================================
+
+Use JSON.stringify() before storing.
+
+Example:
+
+const user = {
+    name: "Ali",
+    age: 20
+};
+
+localStorage.setItem(
+    "user",
+    JSON.stringify(user)
+);
+
+
+Stored Value:
+
+'{"name":"Ali","age":20}'
+
+
+==================================
+        Reading Objects
+==================================
+
+Convert the string back into an object using JSON.parse().
+
+Example:
+
+const user = JSON.parse(
+    localStorage.getItem("user")
+);
+
+console.log(user.name);
+
+Output:
+
+Ali
+
+
+==================================
+        React Example
+==================================
+
+Saving Todos
+
+useEffect(() => {
+    localStorage.setItem(
+        "todos",
+        JSON.stringify(todos)
+    );
+}, [todos]);
+
+
+Loading Todos
+
+const [todos, setTodos] = useState(() => {
+    const saved = localStorage.getItem("todos");
+    return saved ? JSON.parse(saved) : [];
+});
+
+
+==================================
+        Advantages
+==================================
+
+✔ Data persists after closing the browser.
+✔ Simple to use.
+✔ No database required.
+✔ Fast access.
+✔ Good for small amounts of data like:
+   - Theme
+   - Language
+   - Todos
+   - User Preferences
+
+
+==================================
+        Limitations
+==================================
+
+✘ Stores only strings.
+✘ Limited storage (about 5–10 MB).
+✘ Not secure for passwords or sensitive data.
+✘ Data is available only on the same website (origin).
+
+
+==================================
+        Interview Questions
+==================================
+
+Q1. What is Local Storage?
+
+Local Storage is a browser feature that stores data as key-value pairs and keeps it even after the browser is closed.
+
+
+Q2. Which methods are available in Local Storage?
+
+- setItem()
+- getItem()
+- removeItem()
+- clear()
+
+
+Q3. Why do we use JSON.stringify()?
+
+Because Local Storage can only store strings.
+
+
+Q4. Why do we use JSON.parse()?
+
+To convert the stored JSON string back into a JavaScript object.
+
+
+Q5. Does Local Storage expire automatically?
+
+No. Data remains until it is manually removed using removeItem(), clear(), or by the user clearing browser data.
 
 
 
