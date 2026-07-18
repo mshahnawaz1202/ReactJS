@@ -4797,24 +4797,481 @@ No. Data remains until it is manually removed using removeItem(), clear(), or by
 ===============================================================================================================================================================================================
 
 ================================================
-    Redux Toolkit
+                Redux Toolkit
 ================================================
 
+Official Documentation:
 https://redux-toolkit.js.org/
 
+Redux Toolkit is the official and easiest way to manage state in React applications.
 
+------------------------------------------------
+What is State?
+------------------------------------------------
 
+State means the data of your application.
 
+Examples:
+- User Login Information
+- Todo List
+- Shopping Cart
+- Theme (Dark/Light)
+- Counter Value
 
+Instead of passing data from one component to another (Props Drilling),
+Redux stores all the data in one central place called the Store.
 
+================================================
+Redux Toolkit Flow
+================================================
 
+          Component
+               |
+               | dispatch()
+               ▼
+            Reducer
+               |
+               | updates
+               ▼
+             Store
+               |
+               | useSelector()
+               ▼
+          React Component
 
+Simple Flow:
 
+User Action
+    ↓
+dispatch(action)
+    ↓
+Reducer
+    ↓
+Store Updated
+    ↓
+useSelector gets new data
+    ↓
+UI Re-renders Automatically
 
+================================================
+1. Store
+================================================
 
+Store is the central place where all application data is stored.
 
+Think of it like a Database for your frontend.
 
+Example:
 
+import { configureStore } from "@reduxjs/toolkit";
+
+export const store = configureStore({
+    reducer: {
+        todos: todoReducer
+    }
+});
+
+Explanation:
+
+configureStore()
+    Creates the Redux Store.
+
+reducer
+    Contains all reducers of your application.
+
+Every feature (Todo, User, Cart etc.) has its own reducer.
+
+================================================
+2. Reducer (Slice)
+================================================
+
+Reducers are responsible for changing the Store.
+
+A reducer NEVER directly changes the old state.
+Redux Toolkit uses Immer internally, so we can write code that looks like mutation.
+
+Usually create a folder like:
+
+src
+│
+├── features
+│    │
+│    └── todo
+│          │
+│          └── todoSlice.js
+
+Example:
+
+import { createSlice, nanoid } from "@reduxjs/toolkit";
+
+const initialState = {
+    todos: [
+        {
+            id: 1,
+            text: "Hello World!"
+        }
+    ]
+};
+
+export const todoSlice = createSlice({
+    name: "todo",
+
+    initialState,
+
+    reducers: {
+
+        addTodo: (state, action) => {
+
+            const todo = {
+                id: nanoid(),
+                text: action.payload
+            };
+
+            state.todos.push(todo);
+        },
+
+        removeTodo: (state, action) => {
+
+            state.todos = state.todos.filter(
+                (todo) => todo.id !== action.payload
+            );
+        }
+
+    }
+
+});
+
+export const { addTodo, removeTodo } = todoSlice.actions;
+
+export default todoSlice.reducer;
+
+Explanation:
+
+createSlice()
+    Creates reducers and actions automatically.
+
+name
+    Unique name of this slice.
+
+initialState
+    Default data stored in Redux.
+
+reducers
+    Functions that update the Store.
+
+nanoid()
+    Generates a unique ID.
+
+state
+    Current Redux State.
+
+action
+    Data sent from dispatch().
+
+================================================
+3. useDispatch()
+================================================
+
+useDispatch() is used to SEND data to Redux Store.
+
+It calls a reducer.
+
+Example:
+
+const dispatch = useDispatch();
+
+dispatch(addTodo("Learn Redux"));
+
+Flow:
+
+Button Click
+      ↓
+dispatch(addTodo("Learn Redux"))
+      ↓
+Reducer Executes
+      ↓
+Store Updated
+
+Simple Meaning:
+
+dispatch()
+means
+
+"Hey Redux, run this reducer and update the Store."
+
+================================================
+4. useSelector()
+================================================
+
+useSelector() is used to READ data from Redux Store.
+
+Example:
+
+const todos = useSelector((state) => state.todos);
+
+Explanation:
+
+state
+    Complete Redux Store.
+
+state.todos
+    Gets only the todos from the Store.
+
+Whenever the Store changes,
+useSelector automatically updates the component.
+
+Flow:
+
+Store Updated
+      ↓
+useSelector()
+      ↓
+New Data Received
+      ↓
+Component Re-renders
+
+Simple Meaning:
+
+useSelector()
+means
+
+"Give me the latest data from Redux Store."
+
+================================================
+Difference Between useDispatch and useSelector
+================================================
+
+useDispatch()
+
+Purpose:
+Send data to Redux
+
+Works With:
+Reducers
+
+Used For:
+Add, Update, Delete
+
+Example:
+
+dispatch(addTodo("Study"))
+
+------------------------------------------------
+
+useSelector()
+
+Purpose:
+Read data
+
+Works With:
+Store
+
+Used For:
+Display Data
+
+Example:
+
+const todos = useSelector(state => state.todos)
+
+================================================
+Complete Redux Toolkit Flow
+================================================
+
+Step 1
+
+User types:
+
+Study Redux
+
+        ↓
+
+Step 2
+
+dispatch(addTodo("Study Redux"))
+
+        ↓
+
+Step 3
+
+Reducer runs
+
+addTodo(state, action)
+
+        ↓
+
+Step 4
+
+Reducer creates:
+
+{
+    id: nanoid(),
+    text: "Study Redux"
+}
+
+        ↓
+
+Step 5
+
+Reducer adds it into Store
+
+        ↓
+
+Store becomes
+
+todos = [
+    {
+        id:1,
+        text:"Hello World!"
+    },
+    {
+        id:2,
+        text:"Study Redux"
+    }
+]
+
+        ↓
+
+Step 6
+
+useSelector() reads updated Store
+
+        ↓
+
+Step 7
+
+React automatically re-renders
+
+        ↓
+
+New Todo appears on the screen.
+
+================================================
+Important Interview Questions
+================================================
+
+Q1. What is Redux Toolkit?
+
+The official and recommended way to manage state in React applications.
+
+------------------------------------------------
+
+Q2. What is Store?
+
+A central place where all application state is stored.
+
+------------------------------------------------
+
+Q3. What is a Slice?
+
+A Slice contains:
+- Initial State
+- Reducers
+- Actions
+
+------------------------------------------------
+
+Q4. What is Reducer?
+
+A function that updates the Redux Store.
+
+------------------------------------------------
+
+Q5. What is dispatch()?
+
+dispatch() sends an action to Redux so the reducer can update the Store.
+
+------------------------------------------------
+
+Q6. What is useSelector()?
+
+useSelector() reads data from the Redux Store.
+
+------------------------------------------------
+
+Q7. What is action.payload?
+
+The data sent through dispatch().
+
+Example:
+
+dispatch(addTodo("Study Redux"))
+
+Here,
+
+action.payload = "Study Redux"
+
+------------------------------------------------
+
+Q8. What is nanoid()?
+
+A function that generates a unique ID automatically.
+
+================================================
+One-Line Revision
+================================================
+
+Store
+→ Stores all application data.
+
+Reducer
+→ Updates the Store.
+
+Slice
+→ Collection of reducers + actions + initial state.
+
+dispatch()
+→ Sends data to Redux.
+
+useDispatch()
+→ Calls dispatch() inside React.
+
+useSelector()
+→ Reads data from Redux Store.
+
+Action
+→ Object that tells Redux what to do.
+
+Payload
+→ Actual data sent with an action.
+
+nanoid()
+→ Creates unique IDs automatically.
+
+================================================
+Easy Way to Remember
+================================================
+
+Store
+→ Warehouse
+
+Reducer
+→ Worker
+
+dispatch()
+→ Give Order
+
+Action
+→ Order
+
+Payload
+→ Item/Data
+
+useSelector()
+→ Read Data
+
+Flow:
+
+User
+  ↓
+dispatch()
+  ↓
+Reducer
+  ↓
+Store
+  ↓
+useSelector()
+  ↓
+React UI Updates
 
 
 
