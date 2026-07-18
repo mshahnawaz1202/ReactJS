@@ -69,6 +69,42 @@ Whether you're just starting with React or revising core concepts, this reposito
 
 ---
 
+---
+
+# 📘 Learning Guide
+
+This repository includes a comprehensive **`explanation.txt`** file that serves as a complete React learning guide.
+
+The document explains concepts from beginner to intermediate level with theory, examples, diagrams, and best practices.
+
+### Topics Covered
+
+- React Fundamentals
+- JSX
+- Components
+- Props
+- React Rendering Flow
+- React Fiber
+- React Hooks
+  - useState
+  - useEffect
+  - useRef
+  - useCallback
+  - useId
+- Tailwind CSS
+- React Router
+- Context API
+- Local Storage
+- Redux Toolkit
+- Custom React Rendering
+- Best Practices
+- Interview Questions
+- Practical Examples
+
+> 📖 Whether you're learning React for the first time or revising important concepts before interviews, **`explanation.txt`** can be used as a complete study guide alongside the projects.
+
+---
+
 # 🚀 Getting Started
 
 Clone the repository
