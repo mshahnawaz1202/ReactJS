@@ -200,6 +200,27 @@ git push origin feature-name
 
 ---
 
+---
+
+# 📝 Commit Convention
+
+This repository follows clear and meaningful commit messages to keep the project history organized.
+
+| Prefix | Description |
+|--------|-------------|
+| `feat:` | Add a new feature |
+| `fix:` | Fix a bug or issue |
+| `docs:` | Update documentation |
+| `style:` | Code formatting (no logic changes) |
+| `refactor:` | Improve existing code without changing behavior |
+| `perf:` | Performance improvements |
+| `test:` | Add or update tests |
+| `build:` | Build system or dependency changes |
+| `chore:` | Routine maintenance tasks |
+
+
+---
+
 ## ⭐ Support
 
 If you found this repository useful, consider giving it a **Star**. It helps others discover the project and motivates further improvements.
